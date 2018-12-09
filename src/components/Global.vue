@@ -1,5 +1,5 @@
 <script>
-const ipAddr = '180.76.249.233:8080'
+const ipAddr = '211.83.111.247:8082'
 export default {
     ipAddr
 }

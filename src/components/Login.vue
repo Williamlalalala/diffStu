@@ -8,7 +8,7 @@
         <input type="password" v-model="password" name="p" placeholder="密码" required="required" />
         <button type="submit" class="btn btn-primary btn-block btn-large">登录</button>
     </form>
-	<span style="cursor: pointer;"><a href="http://180.76.249.233:8080/newhelp" style="font-size:12px;text-decoration:none">我是管理员</a></span>
+	<span style="cursor: pointer;"><a href="http://211.83.111.247:8082/newhelp" style="font-size:12px;text-decoration:none">我是管理员</a></span>
 </div>
 	</div>
 </template>
@@ -27,7 +27,7 @@ export default {
 			var userName = this.user
 			$.ajax({
 				type:"POST",
-				url:"http://180.76.249.233:8080/newhelp/api/login",
+				url:"http://211.83.111.247:8082/newhelp/api/login",
 				contentType: "application/json; charset=utf-8",
 				data:JSON.stringify({
 					"teacherId":userName,
