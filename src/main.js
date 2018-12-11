@@ -6,13 +6,14 @@ import Icon from 'vue-svg-icon/Icon.vue'
 import Global from './components/Global.vue'
 
 import router from './router'
+import VueRouter from 'vue-router';
 
+Vue.use(VueRouter);
 Vue.use(ElementUI);
 Vue.component('icon',Icon)
 Vue.prototype.Global = Global
-
 new Vue({
   el: '#app',
   router,
   render: h => h(App)
-})
+}).$mount('#app')
