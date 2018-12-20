@@ -516,13 +516,14 @@ export default {
     modifyStuInf:function(){
       var that =this;
       const h = this.$createElement;
+      var token = sessionStorage.getItem('token');
       $.ajax({
           //{newTeacherId}
           url: that.ip+"/newhelp/api/archiveStudent",
           type: "PUT",
-          // beforeSend: function (request) {
-          //   request.setRequestHeader("Authorization", token);
-          // },
+          beforeSend: function (request) {
+            request.setRequestHeader("Authorization", token);
+          },
           contentType: "application/json; charset=utf-8",
           dataType: "json",
           data: JSON.stringify(this.stuDetailInf),
@@ -548,14 +549,15 @@ export default {
     deleteStuInf:function(){
       var that =this;
       const h = this.$createElement;
+      var token = sessionStorage.getItem('token');
       $.ajax({
           //{newTeacherId}
           url: that.ip+"/newhelp/api/archiveStudent",
           type: "DELETE",
-          // beforeSend: function (request) {
-          //   request.setRequestHeader("Authorization", token);
-          // },
-          contentType: "application/json; charset=utf-8",
+          beforeSend: function (request) {
+            request.setRequestHeader("Authorization", token);
+          },
+          contentType: "application/json",
           dataType: "json",
           data: JSON.stringify({studentId: that.mockStuId,
                 destoryingRecorder:sessionStorage.getItem('userName'),
@@ -563,7 +565,10 @@ export default {
                 destoryingTime:''}),
           success: function (res) {
             if (res.success) {
-              console.log('成功');
+              that.$notify({
+                title: '删除成功',
+                message: h('i', { style: 'color: teal'}, '已删除')
+              });
             } else {
               console.log(res);
               that.$notify({
@@ -589,13 +594,14 @@ export default {
       var that = this;
       this.dialogChangePeople = false
       const h = this.$createElement;
+      var token = sessionStorage.getItem('token');
       $.ajax({
           //{newTeacherId}
           url: that.ip+"/newhelp/api/change/"+ that.changePeopleInf.people,
           type: "POST",
-          // beforeSend: function (request) {
-          //   request.setRequestHeader("Authorization", token);
-          // },
+          beforeSend: function (request) {
+            request.setRequestHeader("Authorization", token);
+          },
           contentType: "application/json; charset=utf-8",
           dataType: "json",
           data: JSON.stringify({studentId: that.mockStuId,

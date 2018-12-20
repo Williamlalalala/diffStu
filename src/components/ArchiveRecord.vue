@@ -36,7 +36,7 @@
             
           </el-tabs>
           <el-table :data="recordTable" v-if="table_sign === 1">
-                <el-table-column v-for="data in record_table" :prop="data.prop" :label="data.label">
+                <el-table-column style="max-height: 94px;overflow: auto" v-for="data in record_table" :prop="data.prop" :label="data.label">
                 </el-table-column>
                 <el-table-column fixed="right" label="操作" width="160">
                   <el-button @click=" preChClick(scope.row)" type="text" size="small">更改記錄人</el-button>
@@ -373,6 +373,10 @@ export default {
       }
       console.log(tab, event);
     },
+    preChClick:function(row)  {
+      this.dialogChangePeople = true;
+      this.mockStuId = row.studentId;
+    },
     OpClick:function(row){
       var token = sessionStorage.getItem("token");
       this.mockStuName = row.name;
@@ -413,13 +417,14 @@ export default {
      modifyStuInf:function(){
       var that =this;
       const h = this.$createElement;
+      var token = sessionStorage.getItem('token');
       $.ajax({
           //{newTeacherId}
           url: that.ip+"/newhelp/api/archiveStudent",
           type: "PUT",
-          // beforeSend: function (request) {
-          //   request.setRequestHeader("Authorization", token);
-          // },
+          beforeSend: function (request) {
+            request.setRequestHeader("Authorization", token);
+          },
           contentType: "application/json; charset=utf-8",
           dataType: "json",
           data: JSON.stringify(this.stuDetailInf),
@@ -444,15 +449,15 @@ export default {
     },
     deleteStuInf:function(){
       var that =this;
+      var token = sessionStorage.getItem('token');
       const h = this.$createElement;
       $.ajax({
-          //{newTeacherId}
           url: that.ip+"/newhelp/api/archiveStudent",
           type: "DELETE",
-          // beforeSend: function (request) {
-          //   request.setRequestHeader("Authorization", token);
-          // },
-          contentType: "application/json; charset=utf-8",
+          contentType: "application/json",
+          beforeSend: function (request) {
+            request.setRequestHeader("Authorization", token);
+          },
           dataType: "json",
           data: JSON.stringify({studentId: that.mockStuId,
                 teacherId:"test",
@@ -481,14 +486,15 @@ export default {
     ChClick:function(){
       var that = this;
       this.dialogChangePeople = false
+      var token = sessionStorage.getItem('token');
       const h = this.$createElement;
       $.ajax({
           //{newTeacherId}
           url: that.ip+"/newhelp/api/change/"+ that.changePeopleInf.people,
           type: "POST",
-          // beforeSend: function (request) {
-          //   request.setRequestHeader("Authorization", token);
-          // },
+          beforeSend: function (request) {
+            request.setRequestHeader("Authorization", token);
+          },
           contentType: "application/json; charset=utf-8",
           dataType: "json",
           data: JSON.stringify({studentId: that.mockStuId,
