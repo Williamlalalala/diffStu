@@ -337,9 +337,10 @@ export default {
     var that = this;
     const h = this.$createElement; 
     var token = sessionStorage.getItem("token");
+    this.teacherId = sessionStorage.getItem('userName');
     $.ajax({
         //{recordName}/{studentId}
-        url: this.ip+"/newhelp/api/archiveStudents/"+sessionStorage.getItem('userName'),
+        url: this.ip+"/newhelp/api/archiveStudents/"+that.teacherId,
         type: "GET",
         beforeSend: function (request) {
             request.setRequestHeader("Authorization", token);
@@ -530,6 +531,13 @@ export default {
         console.log(tab, event);
     },
     changeAddStuStatus:function(){
+      this.addStuInfForm.studentId = this.mockStuId;
+      this.addStuInfForm.recorder = this.teacherId;
+      if(this.addStuInfFormFlag == 1){
+        this.addStuInfFormFlag = 0;
+      }else{
+        this.addStuInfFormFlag = 1;
+      }
       this.addStuInfFormFlag = 1;
     },
     OpClick:function(row){

@@ -317,8 +317,8 @@ export default {
                       });
                     } else {
                       that.$notify({
-                        title: '获取数据错误',
-                        message: h('i', { style: 'color: teal'}, '数据获取错误')
+                        title: '添加失败',
+                        message: h('i', { style: 'color: teal'}, '添加失败')
                       });
                     }
                   },
