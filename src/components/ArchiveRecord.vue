@@ -38,7 +38,7 @@
             <el-table-column style="max-height: 94px;overflow: auto" v-for="data in record_table" :prop="data.prop" :label="data.label">
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="160">
-              <el-button @click=" preChClick(scope.row)" type="text" size="small">更改記錄人</el-button>
+              <el-button @click=" preChClick(scope.row)" type="text" size="small">删除记录</el-button>
             </el-table-column>
           </el-table>
           
@@ -88,8 +88,9 @@
             <el-button style="margin:10px;" type="danger" @click="deleteStuInf()" icon="el-icon-delete" circle></el-button>
           </el-col>
           <el-button type="primary" @click="changeAddStuStatus" v-if="table_sign === 1" icon="el-icon-caret-bottom">新增</el-button>
-          <el-form style="background-color:#fcfcfc;margin:10px" v-if="addStuInfFormFlag === 1 && table_sign === 1" ref="addStuInfForm" :model="addStuInfForm" label-width="80px">
-            <el-form-item style="margin-top:10px" label="学生">
+          <div style="background-color:#fcfcfc;margin:10px">
+            <el-form style="background-color:#fcfcfc;padding:10px" v-if="addStuInfFormFlag === 1 && table_sign === 1" ref="addStuInfForm" :model="addStuInfForm" label-width="80px">
+            <el-form-item label="学生">
               <el-input v-model="addStuInfForm.studentId"></el-input>
             </el-form-item>
             <el-form-item label="时间">
@@ -101,11 +102,25 @@
               <el-input v-model="addStuInfForm.witness"></el-input>
             </el-form-item>
             <el-form-item label="记录人">
-              <el-input v-model="addStuInfForm.recordName"></el-input>
+              <el-input v-model="addStuInfForm.recorder"></el-input>
             </el-form-item>
             <el-form-item label="方式">
-              <el-input type="textarea" v-model="addStuInfForm.way"></el-input>
+              <el-select v-model="addStuInfForm.way" placeholder="请选择访谈方式">
+                <el-option label="面谈" value="面谈"></el-option>
+                <el-option label="电话" value="电话"></el-option>
+                <el-option label="网上聊天" value="网上聊天"></el-option>
+                <el-option label="其他" value="其他"></el-option>
+              </el-select>
             </el-form-item>
+            <el-form-item label="地点">
+              <el-select v-model="addStuInfForm.location" placeholder="请选择访谈地点">
+                <el-option label="办公室" value="办公室"></el-option>
+                <el-option label="寝室" value="寝室"></el-option>
+                <el-option label="教学楼" value="教学楼"></el-option>
+                <el-option label="其他" value="其他"></el-option>
+              </el-select>
+            </el-form-item>
+            
             <el-form-item label="内容">
               <el-input type="textarea" v-model="addStuInfForm.content"></el-input>
             </el-form-item>
@@ -117,6 +132,8 @@
               <el-button @click="addStuInfFormFlag = 0">取消</el-button>
             </el-form-item>
           </el-form>
+          </div>
+          
         </div>
         <!--change recorder dialog-->
         <el-dialog title="更改记录人" :visible.sync="dialogChangePeople">
@@ -147,6 +164,7 @@ export default {
       table_sign:2,
       activeName: 'fifth',
       mockStuName:"",
+      teacherId:"",
       mockStuId:"",
       textarea:"",
       dialogChangePeople:false,
@@ -260,6 +278,7 @@ export default {
     handleClick(tab, event) {
       var token = sessionStorage.getItem("token");
       var that = this;
+      const h = this.$createElement;
       this.detailTableFlag = tab.index;
       if(tab.index == 0){
         that.table_sign = 1;
@@ -412,7 +431,13 @@ export default {
       this.mockStuId = row.studentId;
     },
     changeAddStuStatus:function(){
-      this.addStuInfFormFlag = 1;
+      this.addStuInfForm.studentId = this.mockStuId;
+      this.addStuInfForm.recorder = this.teacherId;
+      if(this.addStuInfFormFlag == 1){
+        this.addStuInfFormFlag = 0;
+      }else{
+        this.addStuInfFormFlag = 1;
+      }
     },
     OpClick:function(row){
       var token = sessionStorage.getItem("token");
@@ -453,10 +478,9 @@ export default {
     },
     createNewRecord:function(){
       var that = this;
-      this.dialogChangePeople = false
       var token = sessionStorage.getItem('token');
       const h = this.$createElement;
-      console.log(that.detailTableFlag);
+      this.dialogChangePeople = false
       switch(that.detailTableFlag){
         case '0':that.addStuInfForm.recordName = "联系简易记录表";
           break;
@@ -468,29 +492,55 @@ export default {
           break;
         default: break;
       }
-      console.log(that.addStuInfForm);
       $.ajax({
-          url: that.ip+"/newhelp/api/record",
-          type: "POST",
-          beforeSend: function (request) {
-            request.setRequestHeader("Authorization", token);
-          },
-          contentType: "application/json; charset=utf-8",
-          dataType: "json",
-          data: JSON.stringify(that.addStuInfForm),
-          success: function (res) {
-            if (res.success) {
-              console.log('成功');
-            } else {
-              console.log(res);
+        url: that.ip+"/newhelp/api/record",
+        type: "POST",
+        beforeSend: function (request) {
+          request.setRequestHeader("Authorization", token);
+        },
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        data: JSON.stringify(that.addStuInfForm),
+        success: function (res) {
+          if (res.success) {
+            console.log('成功');
+          } else {
+            console.log(res);
+            that.$notify({
+              title: '发送命令成功',
+              message: h('i', { style: 'color: teal'}, '变更失败')
+            });
+          }
+        },
+        error: function (status) {}
+      });
+       $.ajax({
+            url: this.ip+"/newhelp/api/records/"+that.addStuInfForm.recordName+"/"+this.mockStuId,
+            type: "GET",
+            beforeSend: function (request) {
+                request.setRequestHeader("Authorization", token);
+            },
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (res) {
+              if (res.success) {
+                console.log(res);
+                that.recordTable = res.data;
+              } else {
+                that.$notify({
+                  title: that.addStuInfForm.recordName,
+                  message: h('i', { style: 'color: teal'}, '数据获取错误')
+                });
+              }
+            },
+            error: function () {
               that.$notify({
-                title: '发送命令成功',
-                message: h('i', { style: 'color: teal'}, '变更失败')
-              });
-            }
-          },
-          error: function (status) {}
+                  title: that.addStuInfForm.recordName,
+                  message: h('i', { style: 'color: teal'}, '数据获取错误')
+                })
+            },
         })
+
     },
     modifyStuInf:function(){
       var that =this;
@@ -600,11 +650,11 @@ export default {
     },
     created() {
       let token = sessionStorage.getItem('token');
-      let teacherId = sessionStorage.getItem('userName');
+      this.teacherId = sessionStorage.getItem('userName');
       var that = this;
       //7、查看历史帮扶学生列表
       $.ajax({
-        url: this.ip + "/newhelp/api/historyArchives/" + teacherId,
+        url: this.ip + "/newhelp/api/historyArchives/" + that.teacherId,
         type: "GET",
         beforeSend: function (request) {
           request.setRequestHeader("Authorization", token);

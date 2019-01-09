@@ -42,6 +42,7 @@
                 <el-button @click=" preChClick(scope.row)" type="text" size="small">更改記錄人</el-button>
               </el-table-column>
         </el-table>
+
         <!--此处新增-->
         <el-col :span="18" v-if="table_sign === 2">
 
@@ -87,6 +88,52 @@
           <el-button style="margin:10px;" type="success" @click="modifyStuInf()" icon="el-icon-check" circle></el-button>
           <el-button style="margin:10px;" type="danger" @click="deleteStuInf()" icon="el-icon-delete" circle></el-button>
         </el-col>
+        <el-button type="primary" @click="changeAddStuStatus" v-if="table_sign === 1" icon="el-icon-caret-bottom">新增</el-button>
+        <div style="background-color:#fcfcfc;margin:10px">
+          <el-form style="background-color:#fcfcfc;padding:10px" v-if="addStuInfFormFlag === 1 && table_sign === 1" ref="addStuInfForm" :model="addStuInfForm" label-width="80px">
+            <el-form-item label="学生">
+              <el-input v-model="addStuInfForm.studentId"></el-input>
+            </el-form-item>
+            <el-form-item label="时间">
+              <el-col :span="20">
+                <el-date-picker type="date" placeholder="选择日期" v-model="addStuInfForm.time" style="width: 100%;"></el-date-picker>
+              </el-col>
+            </el-form-item>
+            <el-form-item label="见证人">
+              <el-input v-model="addStuInfForm.witness"></el-input>
+            </el-form-item>
+            <el-form-item label="记录人">
+              <el-input v-model="addStuInfForm.recorder"></el-input>
+            </el-form-item>
+            <el-form-item label="方式">
+              <el-select v-model="addStuInfForm.way" placeholder="请选择访谈方式">
+                <el-option label="面谈" value="面谈"></el-option>
+                <el-option label="电话" value="电话"></el-option>
+                <el-option label="网上聊天" value="网上聊天"></el-option>
+                <el-option label="其他" value="其他"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="地点">
+              <el-select v-model="addStuInfForm.location" placeholder="请选择访谈地点">
+                <el-option label="办公室" value="办公室"></el-option>
+                <el-option label="寝室" value="寝室"></el-option>
+                <el-option label="教学楼" value="教学楼"></el-option>
+                <el-option label="其他" value="其他"></el-option>
+              </el-select>
+            </el-form-item>
+            
+            <el-form-item label="内容">
+              <el-input type="textarea" v-model="addStuInfForm.content"></el-input>
+            </el-form-item>
+            <el-form-item label="评论">
+              <el-input type="textarea" v-model="addStuInfForm.comment"></el-input>
+            </el-form-item>
+            <el-form-item style="margin-bottom:10px">
+              <el-button type="primary" @click="createNewRecord">立即创建</el-button>
+              <el-button @click="addStuInfFormFlag = 0">取消</el-button>
+            </el-form-item>
+          </el-form>
+        </div>
       </div>
       <!--change recorder dialog-->
       <el-dialog title="更改记录人" :visible.sync="dialogChangePeople">
@@ -122,6 +169,10 @@ export default {
       textarea:"",
       dialogChangePeople:false,
       formLabelWidth: '120px',
+      teacherId:"",
+      addStuInfFormFlag:0,
+      addStuInfForm:{},
+      detailTableFlag:0,
       //进入之后的
       recordTable:[],
       formInline: {
@@ -329,6 +380,8 @@ export default {
     },*/
     handleClick(tab, event) {
       var token = sessionStorage.getItem("token");
+      this.detailTableFlag = tab.index;
+      const h = this.$createElement;
       var that = this;
       if(tab.index == 0){
         that.table_sign = 1;
@@ -476,6 +529,9 @@ export default {
       }
         console.log(tab, event);
     },
+    changeAddStuStatus:function(){
+      this.addStuInfFormFlag = 1;
+    },
     OpClick:function(row){
       var token = sessionStorage.getItem("token");
       console.log(row);
@@ -512,6 +568,72 @@ export default {
             })
         },
     })
+    },
+    createNewRecord:function(){
+      var that = this;
+      var token = sessionStorage.getItem('token');
+      const h = this.$createElement;
+      this.dialogChangePeople = false
+      switch(that.detailTableFlag){
+        case '0':that.addStuInfForm.recordName = "联系简易记录表";
+          break;
+        case '1':that.addStuInfForm.recordName = "面谈记录表";
+          break;
+        case '2':that.addStuInfForm.recordName = "家长联系记录表";
+          break;
+        case '3':that.addStuInfForm.recordName = "研讨及总结记录";
+          break;
+        default: break;
+      }
+      $.ajax({
+        url: that.ip+"/newhelp/api/record",
+        type: "POST",
+        beforeSend: function (request) {
+          request.setRequestHeader("Authorization", token);
+        },
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        data: JSON.stringify(that.addStuInfForm),
+        success: function (res) {
+          if (res.success) {
+            console.log('成功');
+          } else {
+            console.log(res);
+            that.$notify({
+              title: '发送命令成功',
+              message: h('i', { style: 'color: teal'}, '变更失败')
+            });
+          }
+        },
+        error: function (status) {}
+      });
+       $.ajax({
+            url: this.ip+"/newhelp/api/records/"+that.addStuInfForm.recordName+"/"+this.mockStuId,
+            type: "GET",
+            beforeSend: function (request) {
+                request.setRequestHeader("Authorization", token);
+            },
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (res) {
+              if (res.success) {
+                console.log(res);
+                that.recordTable = res.data;
+              } else {
+                that.$notify({
+                  title: that.addStuInfForm.recordName,
+                  message: h('i', { style: 'color: teal'}, '数据获取错误')
+                });
+              }
+            },
+            error: function () {
+              that.$notify({
+                  title: that.addStuInfForm.recordName,
+                  message: h('i', { style: 'color: teal'}, '数据获取错误')
+                })
+            },
+        })
+
     },
     modifyStuInf:function(){
       var that =this;
