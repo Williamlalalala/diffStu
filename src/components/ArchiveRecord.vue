@@ -33,15 +33,15 @@
             <el-tab-pane label="家长联系记录表" name="third">家长联系记录表</el-tab-pane>
             <el-tab-pane label="研讨及总结记录" name="fourth">研讨及总结记录</el-tab-pane>
             <el-tab-pane label="学生档案" name="fifth">学生档案</el-tab-pane>
-            
           </el-tabs>
           <el-table :data="recordTable" v-if="table_sign === 1">
-                <el-table-column style="max-height: 94px;overflow: auto" v-for="data in record_table" :prop="data.prop" :label="data.label">
-                </el-table-column>
-                <el-table-column fixed="right" label="操作" width="160">
-                  <el-button @click=" preChClick(scope.row)" type="text" size="small">更改記錄人</el-button>
-                </el-table-column>
+            <el-table-column style="max-height: 94px;overflow: auto" v-for="data in record_table" :prop="data.prop" :label="data.label">
+            </el-table-column>
+            <el-table-column fixed="right" label="操作" width="160">
+              <el-button @click=" preChClick(scope.row)" type="text" size="small">更改記錄人</el-button>
+            </el-table-column>
           </el-table>
+          
           <!--此处新增-->
           <el-col :span="18" v-if="table_sign === 2">
 
@@ -87,6 +87,36 @@
             <el-button style="margin:10px;" type="success" @click="modifyStuInf()" icon="el-icon-check" circle></el-button>
             <el-button style="margin:10px;" type="danger" @click="deleteStuInf()" icon="el-icon-delete" circle></el-button>
           </el-col>
+          <el-button type="primary" @click="changeAddStuStatus" v-if="table_sign === 1" icon="el-icon-caret-bottom">新增</el-button>
+          <el-form style="background-color:#fcfcfc;margin:10px" v-if="addStuInfFormFlag === 1 && table_sign === 1" ref="addStuInfForm" :model="addStuInfForm" label-width="80px">
+            <el-form-item style="margin-top:10px" label="学生">
+              <el-input v-model="addStuInfForm.studentId"></el-input>
+            </el-form-item>
+            <el-form-item label="时间">
+              <el-col :span="20">
+                <el-date-picker type="date" placeholder="选择日期" v-model="addStuInfForm.time" style="width: 100%;"></el-date-picker>
+              </el-col>
+            </el-form-item>
+            <el-form-item label="见证人">
+              <el-input v-model="addStuInfForm.witness"></el-input>
+            </el-form-item>
+            <el-form-item label="记录人">
+              <el-input v-model="addStuInfForm.recordName"></el-input>
+            </el-form-item>
+            <el-form-item label="方式">
+              <el-input type="textarea" v-model="addStuInfForm.way"></el-input>
+            </el-form-item>
+            <el-form-item label="内容">
+              <el-input type="textarea" v-model="addStuInfForm.content"></el-input>
+            </el-form-item>
+            <el-form-item label="评论">
+              <el-input type="textarea" v-model="addStuInfForm.comment"></el-input>
+            </el-form-item>
+            <el-form-item style="margin-bottom:10px">
+              <el-button type="primary" @click="createNewRecord">立即创建</el-button>
+              <el-button @click="addStuInfFormFlag = 0">取消</el-button>
+            </el-form-item>
+          </el-form>
         </div>
         <!--change recorder dialog-->
         <el-dialog title="更改记录人" :visible.sync="dialogChangePeople">
@@ -137,6 +167,9 @@ export default {
         nation: "",
         sex: ""
       },
+      addStuInfFormFlag:0,
+      addStuInfForm:{},
+      detailTableFlag:0,
       changePeopleInf:{
         reson:"",
         people:""
@@ -227,6 +260,7 @@ export default {
     handleClick(tab, event) {
       var token = sessionStorage.getItem("token");
       var that = this;
+      this.detailTableFlag = tab.index;
       if(tab.index == 0){
         that.table_sign = 1;
         $.ajax({
@@ -377,6 +411,9 @@ export default {
       this.dialogChangePeople = true;
       this.mockStuId = row.studentId;
     },
+    changeAddStuStatus:function(){
+      this.addStuInfFormFlag = 1;
+    },
     OpClick:function(row){
       var token = sessionStorage.getItem("token");
       this.mockStuName = row.name;
@@ -414,20 +451,33 @@ export default {
         },
       })
     },
-     modifyStuInf:function(){
-      var that =this;
-      const h = this.$createElement;
+    createNewRecord:function(){
+      var that = this;
+      this.dialogChangePeople = false
       var token = sessionStorage.getItem('token');
+      const h = this.$createElement;
+      console.log(that.detailTableFlag);
+      switch(that.detailTableFlag){
+        case '0':that.addStuInfForm.recordName = "联系简易记录表";
+          break;
+        case '1':that.addStuInfForm.recordName = "面谈记录表";
+          break;
+        case '2':that.addStuInfForm.recordName = "家长联系记录表";
+          break;
+        case '3':that.addStuInfForm.recordName = "研讨及总结记录";
+          break;
+        default: break;
+      }
+      console.log(that.addStuInfForm);
       $.ajax({
-          //{newTeacherId}
-          url: that.ip+"/newhelp/api/archiveStudent",
-          type: "PUT",
+          url: that.ip+"/newhelp/api/record",
+          type: "POST",
           beforeSend: function (request) {
             request.setRequestHeader("Authorization", token);
           },
           contentType: "application/json; charset=utf-8",
           dataType: "json",
-          data: JSON.stringify(this.stuDetailInf),
+          data: JSON.stringify(that.addStuInfForm),
           success: function (res) {
             if (res.success) {
               console.log('成功');
@@ -439,12 +489,40 @@ export default {
               });
             }
           },
-          error: function (status) {
+          error: function (status) {}
+        })
+    },
+    modifyStuInf:function(){
+      var that =this;
+      const h = this.$createElement;
+      var token = sessionStorage.getItem('token');
+      $.ajax({
+        //{newTeacherId}
+        url: that.ip+"/newhelp/api/archiveStudent",
+        type: "PUT",
+        beforeSend: function (request) {
+          request.setRequestHeader("Authorization", token);
+        },
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        data: JSON.stringify(this.stuDetailInf),
+        success: function (res) {
+          if (res.success) {
+            console.log('成功');
+          } else {
+            console.log(res);
             that.$notify({
-                title: status,
-                message: h('i', { style: 'color: teal'}, '变更失败')
-              });
-          },
+              title: '发送命令成功',
+              message: h('i', { style: 'color: teal'}, '变更失败')
+            });
+          }
+        },
+        error: function (status) {
+          that.$notify({
+              title: status,
+              message: h('i', { style: 'color: teal'}, '变更失败')
+            });
+        },
       })
     },
     deleteStuInf:function(){
@@ -530,7 +608,11 @@ export default {
         type: "GET",
         beforeSend: function (request) {
           request.setRequestHeader("Authorization", token);
-        },contentType: "application/json; charset=utf-8",
+        },
+        contentType: false,
+        async:false,
+        contentType: false,
+        processData: false,
         dataType: "json",
         success: function (data) {
           if (data.success) {
