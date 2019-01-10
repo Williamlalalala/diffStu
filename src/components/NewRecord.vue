@@ -431,12 +431,12 @@ export default {
   width: 100%;
 
 }
-.el-input__inner{
+/* .el-input__inner{
   display: inline-block;
   margin: 5px;
   padding: 10px;
   width: 200px;
-}
+} */
 .dynamicClass{
   width: 100%;
   position: relative;

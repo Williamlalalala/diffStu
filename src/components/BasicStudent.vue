@@ -21,7 +21,7 @@
                     </el-checkbox-group>
       
         <button id="confirm" @click="changeSettings">确认</button>
-        <button id="confirmImExport" @click="changeSettings">确认</button>
+        <button id="confirmImExport" @click="changeImExportSettings">确认</button>
         </div>
         </div>
               <div class="top-btn">
@@ -131,9 +131,9 @@
                                   </el-form-item>
                                 </el-form>
                           </div>
-                          <el-button @click.native="showSearchBox" slot="reference" class="search-btn" type="primary">查询</el-button>
+                          <el-button @click.native="showSearchBox" slot="reference" class="search-button" type="primary">查询</el-button>
                       </el-popover>
-                      <el-button @click="toggleAdvancedSearch" class="search-btn">高级查询</el-button>
+                      <el-button @click="toggleAdvancedSearch" class="search-button">高级查询</el-button>
                     </el-row>
                     <input  type ="file" id="fileExcel" @change="uploadVerify" style="opacity:1;display:none;float:right;font-size:12px;margin-top:8px" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
                     <form class="" action="http://211.83.111.247:8082/newhelp/api/download/baseStudentTemplate" method="get" style="display:none">
@@ -562,6 +562,7 @@ export default {
             success:function(data){
                 alert(data.message);
                 self.password=''
+                $("#fileExcel").val("")
             },
             error:function(XMLHttpRequest,textStatus,errorThrown,data){
                 alert("上传失败"+XMLHttpRequest.status);
@@ -947,6 +948,13 @@ export default {
       }
     },
     uploadExcel(){
+      if(this.chooseStuInfoToImExport.length==0)
+      {
+        this.ifChecked=new Array(43);
+        this.ifChecked.fill(1)
+        console.log("ifChecked:"+this.ifChecked)
+        this.setSettings()
+      }
       $("#fileExcel").click();
     },
     downloadTemplate(){
@@ -1062,6 +1070,24 @@ export default {
                 alert("请选择5～12项");
             }
         },
+    changeImExportSettings(){
+      var allOptions = this.chooseStuInfoToImExport
+      var count=allOptions.length
+            for(var j=0;j<this.setting_stu_table.length;j++){
+              this.ifChecked = new Array(43);
+              this.ifChecked.fill(0)
+            }
+              this.hideSettings();
+              for(var i=0;i<count;i++){
+                for(var j=0;j<this.setting_stu_table.length;j++){
+                  if(allOptions[i]==this.setting_stu_table[j].label){
+                    this.ifChecked[j]=1
+                  }
+                }
+              }
+              this.setSettings();
+              this.chooseStuInfoToImExport=[]
+    },
     hideSettings(){
       $('#cover').css('display','none');
     },
@@ -1302,7 +1328,7 @@ export default {
     font-size: 15px;
     display: none;
 }
-    .search-btn{
+    .search-button{
       float:right;
       margin: 4px;
     }

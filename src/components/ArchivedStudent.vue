@@ -635,13 +635,13 @@ export default {
   line-height: 50px;
   margin-bottom: 10px;
 }
-.el-form-item {
+/* .el-form-item {
   width: 50%;
   position: relative;
   left: 25%;
   display: flex;
   justify-content: flex-start;
-}
+} */
 .innerOp{
   margin: 20px;
 }
