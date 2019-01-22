@@ -33,9 +33,17 @@
           <el-tab-pane label="家长联系记录表" name="third">家长联系记录表</el-tab-pane>
           <el-tab-pane label="研讨及总结记录" name="fourth">研讨及总结记录</el-tab-pane>
           <el-tab-pane label="学生档案" name="fifth">学生档案</el-tab-pane>
-          
         </el-tabs>
         <el-table :data="recordTable" v-if="table_sign === 1">
+              <el-table-column type="expand">
+                <template slot-scope="props">
+                  <el-form label-position="left" inline class="demo-table-expand">
+                    <el-form-item label="访谈内容">
+                      <span>{{ props.row.content }}</span>
+                    </el-form-item>
+                  </el-form>
+                </template>
+              </el-table-column>
               <el-table-column v-for="data in record_table" :prop="data.prop" :label="data.label">
               </el-table-column>
               <el-table-column fixed="right" label="操作" width="160">
@@ -88,9 +96,9 @@
           <el-button style="margin:10px;" type="success" @click="modifyStuInf()" icon="el-icon-check" circle></el-button>
           <el-button style="margin:10px;" type="danger" @click="deleteStuInf()" icon="el-icon-delete" circle></el-button>
         </el-col>
-        <el-button type="primary" @click="changeAddStuStatus" v-if="table_sign === 1" icon="el-icon-caret-bottom">新增</el-button>
-        <div style="background-color:#fcfcfc;margin:10px">
-          <el-form style="background-color:#fcfcfc;padding:10px" v-if="addStuInfFormFlag === 1 && table_sign === 1" ref="addStuInfForm" :model="addStuInfForm" label-width="80px">
+        <el-button type="primary" @click="changeAddStuStatus" v-if="table_sign === 1">新增</el-button>
+        <el-dialog title="新增记录" :visible.sync="addStuInfFormFlag" >
+          <el-form style="background-color:#fcfcfc;padding:10px" ref="addStuInfForm" :model="addStuInfForm" label-width="80px">
             <el-form-item label="学生">
               <el-input v-model="addStuInfForm.studentId"></el-input>
             </el-form-item>
@@ -130,10 +138,10 @@
             </el-form-item>
             <el-form-item style="margin-bottom:10px">
               <el-button type="primary" @click="createNewRecord">立即创建</el-button>
-              <el-button @click="addStuInfFormFlag = 0">取消</el-button>
+              <el-button @click="addStuInfFormFlag = false">取消</el-button>
             </el-form-item>
           </el-form>
-        </div>
+        </el-dialog>
       </div>
       <!--change recorder dialog-->
       <el-dialog title="更改记录人" :visible.sync="dialogChangePeople">
@@ -170,7 +178,7 @@ export default {
       dialogChangePeople:false,
       formLabelWidth: '120px',
       teacherId:"",
-      addStuInfFormFlag:0,
+      addStuInfFormFlag:false,
       addStuInfForm:{},
       detailTableFlag:0,
       //进入之后的
@@ -212,7 +220,7 @@ export default {
             { label: '记录者', prop: "recorder", show: true },
             { label: '参与者', prop: "participant", show: true },
             { label: '方式', prop: "way", show: true },
-            { label: '内容', prop: "content", show: true },
+            //{ label: '内容', prop: "content", show: false },
             { label: '评论', prop: "comment", show: true }
       ],
       allMajor: [
@@ -356,14 +364,14 @@ export default {
           } else {
             that.$notify({
               title: '标题名称',
-              message: h('i', { style: 'color: teal'}, '数据获取错误')
+              message: h('i', { style: 'color: teal'}, '请重新登录')
             });
           }
         },
         error: function () {
           that.$notify({
               title: '标题名称',
-              message: h('i', { style: 'color: teal'}, '数据获取错误')
+              message: h('i', { style: 'color: teal'}, '请重新登录')
             })
         },
     })
@@ -401,14 +409,14 @@ export default {
               } else {
                 that.$notify({
                   title: '联系简易记录表',
-                  message: h('i', { style: 'color: teal'}, '数据获取错误')
+                  message: h('i', { style: 'color: teal'}, '请重新登录')
                 });
               }
             },
             error: function () {
               that.$notify({
                   title: '联系简易记录表',
-                  message: h('i', { style: 'color: teal'}, '数据获取错误')
+                  message: h('i', { style: 'color: teal'}, '请重新登录')
                 })
             },
         })
@@ -430,14 +438,14 @@ export default {
               } else {
                 that.$notify({
                   title: '面谈记录表',
-                  message: h('i', { style: 'color: teal'}, '数据获取错误')
+                  message: h('i', { style: 'color: teal'}, '请重新登录')
                 });
               }
             },
             error: function () {
               that.$notify({
                   title: '面谈记录表',
-                  message: h('i', { style: 'color: teal'}, '数据获取错误')
+                  message: h('i', { style: 'color: teal'}, '请重新登录')
                 })
             },
         })
@@ -458,14 +466,14 @@ export default {
               } else {
                 that.$notify({
                   title: '家长联系记录表',
-                  message: h('i', { style: 'color: teal'}, '数据获取错误')
+                  message: h('i', { style: 'color: teal'}, '请重新登录')
                 });
               }
             },
             error: function () {
               that.$notify({
                   title: '家长联系记录表',
-                  message: h('i', { style: 'color: teal'}, '数据获取错误')
+                  message: h('i', { style: 'color: teal'}, '请重新登录')
                 })
             },
         })
@@ -486,14 +494,14 @@ export default {
               } else {
                 that.$notify({
                   title: '研讨及总结记录',
-                  message: h('i', { style: 'color: teal'}, '数据获取错误')
+                  message: h('i', { style: 'color: teal'}, '请重新登录')
                 });
               }
             },
             error: function () {
               that.$notify({
                   title: '研讨及总结记录',
-                  message: h('i', { style: 'color: teal'}, '数据获取错误')
+                  message: h('i', { style: 'color: teal'}, '请重新登录')
                 })
             },
         })
@@ -516,14 +524,14 @@ export default {
               } else {
                 that.$notify({
                   title: '标题名称',
-                  message: h('i', { style: 'color: teal'}, '数据获取错误')
+                  message: h('i', { style: 'color: teal'}, '请重新登录')
                 });
               }
             },
             error: function () {
               that.$notify({
                   title: '标题名称',
-                  message: h('i', { style: 'color: teal'}, '数据获取错误')
+                  message: h('i', { style: 'color: teal'}, '请重新登录')
                 })
             },
         })
@@ -533,12 +541,7 @@ export default {
     changeAddStuStatus:function(){
       this.addStuInfForm.studentId = this.mockStuId;
       this.addStuInfForm.recorder = this.teacherId;
-      if(this.addStuInfFormFlag == 1){
-        this.addStuInfFormFlag = 0;
-      }else{
-        this.addStuInfFormFlag = 1;
-      }
-      this.addStuInfFormFlag = 1;
+      this.addStuInfFormFlag = true;
     },
     OpClick:function(row){
       var token = sessionStorage.getItem("token");
@@ -565,14 +568,14 @@ export default {
           } else {
             that.$notify({
               title: '标题名称',
-              message: h('i', { style: 'color: teal'}, '数据获取错误')
+              message: h('i', { style: 'color: teal'}, '请重新登录')
             });
           }
         },
         error: function () {
           that.$notify({
               title: '标题名称',
-              message: h('i', { style: 'color: teal'}, '数据获取错误')
+              message: h('i', { style: 'color: teal'}, '请重新登录')
             })
         },
     })
@@ -630,14 +633,14 @@ export default {
               } else {
                 that.$notify({
                   title: that.addStuInfForm.recordName,
-                  message: h('i', { style: 'color: teal'}, '数据获取错误')
+                  message: h('i', { style: 'color: teal'}, '请重新登录')
                 });
               }
             },
             error: function () {
               that.$notify({
                   title: that.addStuInfForm.recordName,
-                  message: h('i', { style: 'color: teal'}, '数据获取错误')
+                  message: h('i', { style: 'color: teal'}, '请重新登录')
                 })
             },
         })

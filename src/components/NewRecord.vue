@@ -348,23 +348,9 @@ export default {
             success: function (res) {
               if (res.success) {
                 that.holeHelpType = res.data; 
-                console.log(that.holeHelpType);
-                that.$notify({
-                  title: '获取帮扶类型成功',
-                  message: h('i', { style: 'color: green'}, '数据获取成功')
-                });
-              } else {
-                that.$notify({
-                  title: '',
-                  message: h('i', { style: 'color: teal'}, '数据获取错误1')
-                });
-              }
+              } 
             },
             error: function () {
-              that.$notify({
-                  title: '',
-                  message: h('i', { style: 'color: teal'}, '数据获取错误2')
-                })
             },
           })
       $.ajax({
@@ -380,23 +366,9 @@ export default {
             success: function (res) {
               if (res.success) {
                 that.holeAttentionType = res.data; 
-                console.log(that.holeHelpType);
-                that.$notify({
-                  title: '获取关注类型成功',
-                  message: h('i', { style: 'color: green'}, '数据获取成功')
-                });
-              } else {
-                that.$notify({
-                  title: '',
-                  message: h('i', { style: 'color: teal'}, '数据获取错误1')
-                });
-              }
+              } 
             },
             error: function () {
-              that.$notify({
-                  title: '',
-                  message: h('i', { style: 'color: teal'}, '数据获取错误2')
-                })
             },
           })
   },
