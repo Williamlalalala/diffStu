@@ -317,8 +317,8 @@ export default {
                       });
                     } else {
                       that.$notify({
-                        title: '获取数据错误',
-                        message: h('i', { style: 'color: teal'}, '数据获取错误')
+                        title: '添加失败',
+                        message: h('i', { style: 'color: teal'}, res.message)
                       });
                     }
                   },
@@ -431,12 +431,12 @@ export default {
   width: 100%;
 
 }
-/* .el-input__inner{
+.el-input__inner{
   display: inline-block;
   margin: 5px;
   padding: 10px;
   width: 200px;
-} */
+}
 .dynamicClass{
   width: 100%;
   position: relative;

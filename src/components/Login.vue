@@ -7,6 +7,7 @@
     	<input type="text" v-model="user" name="u" placeholder="用户名" required="required" />
         <input type="password" v-model="password" name="p" placeholder="密码" required="required" />
         <button type="submit" class="btn btn-primary btn-block btn-large">登录</button>
+		<el-checkbox v-model="checked">记住密码</el-checkbox>
     </form>
 	<span style="cursor: pointer;"><a href="http://211.83.111.247:8082/newhelp" style="font-size:12px;text-decoration:none">我是管理员</a></span>
 </div>
@@ -19,12 +20,18 @@ export default {
 	data(){
 		return {
 			user:'',
-			password:''
+			password:'',
+			checked: true
 		}
+	},
+	created() {
+		if(this.user = localStorage.getItem('user')){}
+		if(this.password = localStorage.getItem('password')){}
 	},
 	methods:{
 		login(){
-			var userName = this.user
+			var userName = this.user;
+			var that = this;
 			$.ajax({
 				type:"POST",
 				url:"http://211.83.111.247:8082/newhelp/api/login",
@@ -34,28 +41,32 @@ export default {
 					"password":this.password
 				}),
 				dataType:"json",
-
-      success:function(data){
-         if(data.success){
-          var token = data.data.token;
-          var customerName = data.data.name;
-          var customerDuty = data.data.duty;
-          sessionStorage.setItem('token', token);
-          sessionStorage.setItem('userName', userName);
-          sessionStorage.setItem('customerName', customerName);
-          sessionStorage.setItem('customerDuty', customerDuty);
-          router.push({name:"studentManage"})
-        }
-        else{
-          alert(data.message)
-          return false;
-        }
-      },
-      error:function(XMLHttpRequest){
-          alert("连接失败！错误码"+XMLHttpRequest.status);
-          return false;
-      },
-    });
+				success:function(data){
+					if(data.success){
+					var token = data.data.token;
+					var customerName = data.data.name;
+					var customerDuty = data.data.duty;
+					sessionStorage.setItem('token', token);
+					sessionStorage.setItem('userName', userName);
+					sessionStorage.setItem('customerName', customerName);
+					sessionStorage.setItem('customerDuty', customerDuty);
+					if(that.checked){
+						localStorage.setItem('user', that.user);
+						localStorage.setItem('password', that.password);
+					}
+					router.push({name:"studentManage"})
+					
+					}
+					else{
+					alert(data.message)
+					return false;
+					}
+				},
+				error:function(XMLHttpRequest){
+					alert("连接失败！错误码"+XMLHttpRequest.status);
+					return false;
+				},
+			});
 		}
 	}
 }

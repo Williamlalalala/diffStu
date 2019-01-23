@@ -168,7 +168,7 @@
                         <el-table-column v-for="data in setting_stu_table" :label="data.label" :key="data.prop" v-if="data.show" :prop="data.prop">
                           <template scope="scope">
                             <el-input v-show="scope.row.signal=='高级查询'" size="small" v-model="scope.row[data.prop]" :placeholder="data.label"></el-input>
-                            <span v-show="scope.row.signal!=='高级查询'">{{scope.row[data.prop]}}</span>
+                            <span @click="browseInfo(scope.$index)" v-show="scope.row.signal!=='高级查询'">{{scope.row[data.prop]}}</span>
                           </template>
                         </el-table-column>
                       <el-table-column fixed="right" label="操作" width="100">
@@ -204,7 +204,7 @@
             <!-- 查看详细信息 -->
             <div class="detailedInfo" style="display:none">
                 <el-breadcrumb separator="/" style="margin-bottom: 20px">
-                  <el-breadcrumb-item ><a @click="backToTable">学生信息</a></el-breadcrumb-item>
+                  <el-breadcrumb-item >您的位置：<a @click="backToTable">学生信息</a></el-breadcrumb-item>
                   <el-breadcrumb-item>{{choosedStudent}}</el-breadcrumb-item>
                 </el-breadcrumb>
                 <el-tabs v-model="activeInfoName" type="border-card">
@@ -338,7 +338,7 @@ export default {
         {label:'家乡所在火车站',code:'hometownRailwayStation'},{label:'省份',code:'province'},{label:'所在城市',code:'city'},{label:'家庭详细地址',code:'familyAddress'},
         {label:'家庭电话',code:'familyTelNumber'},{label:'邮政编码',code:'postcode'},{label:'特长',code:'specialty'},{label:'高中曾任职务',code:'dutyInHighSchool'},
         {label:'高中曾获奖励',code:'awardInHighSchool'},{label:'科技竞赛获奖',code:'isHadTechnologyCompetitionAward'},{label:'父亲姓名',code:'fatherName'},{label:'父亲工作单位',code:'fatherWorkUnit'},
-        {label:'父亲工作单位地址',code:'fatherWorkUnitAddress'},{label:'父亲职务',ccode:'fatherDuty'},{label:'父亲邮编',code:'fatherPostcode'},{label:'父亲电话',code:'fatherTelNumber'},
+        {label:'父亲工作单位地址',code:'fatherWorkUnitAddress'},{label:'父亲职务',code:'fatherDuty'},{label:'父亲邮编',code:'fatherPostcode'},{label:'父亲电话',code:'fatherTelNumber'},
         {label:'母亲姓名',code:'motherName'},{label:'母亲工作单位',code:'motherWorkUnit'},{label:'母亲工作单位地址',code:'motherWorkUnitAddress'},{label:'母亲职务',code:'motherDuty'},
         {label:'母亲邮编',code:'motherPostcode'},{label:'母亲电话',code:'motherTelNumber'},
         {label:'学业状态',code:'studyCondition'}
@@ -362,7 +362,7 @@ export default {
         {label:'家庭详细地址',code:'familyAddress'},
         {label:'家庭电话',code:'familyTelNumber'},{label:'父亲姓名',code:'fatherName'},
         {label:'父亲工作单位',code:'fatherWorkUnit'},
-        {label:'父亲工作单位地址',code:'fatherWorkUnitAddress'},{label:'父亲职务',ccode:'fatherDuty'},
+        {label:'父亲工作单位地址',code:'fatherWorkUnitAddress'},{label:'父亲职务',code:'fatherDuty'},
         {label:'父亲邮编',code:'fatherPostcode'},{label:'父亲电话',code:'fatherTelNumber'},{label:'母亲姓名',code:'motherName'},
         {label:'母亲工作单位',code:'motherWorkUnit'},{label:'母亲工作单位地址',code:'motherWorkUnitAddress'},
         {label:'母亲职务',code:'motherDuty'},
@@ -895,7 +895,7 @@ export default {
       $('.detailedInfo').show();
       $('.defaultInfoTable').hide();
       this.editStuInfo=false
-      this.choosedStudent = this.testData[index].Name
+      this.choosedStudent = this.testData[index].name
       this.allInfoSet = this.testData[index]
       var token = sessionStorage.getItem('token')
       var self=this
@@ -952,7 +952,6 @@ export default {
       {
         this.ifChecked=new Array(43);
         this.ifChecked.fill(1)
-        console.log("ifChecked:"+this.ifChecked)
         this.setSettings()
       }
       $("#fileExcel").click();
@@ -1086,7 +1085,6 @@ export default {
                 }
               }
               this.setSettings();
-              this.chooseStuInfoToImExport=[]
     },
     hideSettings(){
       $('#cover').css('display','none');
