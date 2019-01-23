@@ -1,14 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import BasicStudent from './components/BasicStudent'
-import HistoricStudents from './components/HistoricStudents'
-import StatisticalNumber from './components/StatisticalNumber'
-import Login from './components/Login'
-import StudentManage from './components/StudentManage'
-import ArchivedStudent from './components/ArchivedStudent'
-import NewRecord from './components/NewRecord'
-import ArchiveRecord from './components/ArchiveRecord'
-import HelpType from './components/HelpType'
+import BasicStudent from '../components/BasicStudent'
+import HistoricStudents from '../components/HistoricStudents'
+import StatisticalNumber from '../components/StatisticalNumber'
+import Login from '../components/Login'
+import StudentManage from '../components/StudentManage'
+import ArchivedStudent from '../components/ArchivedStudent'
+import NewRecord from '../components/NewRecord'
+import ArchiveRecord from '../components/ArchiveRecord'
+import HelpType from '../components/HelpType'
 
 Vue.use(Router)
 
@@ -25,8 +25,7 @@ let router = new Router({
       {path:'/historicStudents',name:'historicStudents',component:HistoricStudents},
       {path:'/statisticalNumber',name:'statisticalNumber',component:StatisticalNumber}
     ]}
-  ],
-  mode:'history'
+  ]
 })
 
 export default router

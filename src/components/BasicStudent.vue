@@ -21,7 +21,7 @@
                     </el-checkbox-group>
       
         <button id="confirm" @click="changeSettings">确认</button>
-        <button id="confirmImExport" @click="changeSettings">确认</button>
+        <button id="confirmImExport" @click="changeImExportSettings">确认</button>
         </div>
         </div>
               <div class="top-btn">
@@ -131,9 +131,9 @@
                                   </el-form-item>
                                 </el-form>
                           </div>
-                          <el-button @click.native="showSearchBox" slot="reference" class="search-btn" type="primary">查询</el-button>
+                          <el-button @click.native="showSearchBox" slot="reference" class="search-button" type="primary">查询</el-button>
                       </el-popover>
-                      <el-button @click="toggleAdvancedSearch" class="search-btn">高级查询</el-button>
+                      <el-button @click="toggleAdvancedSearch" class="search-button">高级查询</el-button>
                     </el-row>
                     <input  type ="file" id="fileExcel" @change="uploadVerify" style="opacity:1;display:none;float:right;font-size:12px;margin-top:8px" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
                     <form class="" action="http://211.83.111.247:8082/newhelp/api/download/baseStudentTemplate" method="get" style="display:none">
@@ -168,7 +168,7 @@
                         <el-table-column v-for="data in setting_stu_table" :label="data.label" :key="data.prop" v-if="data.show" :prop="data.prop">
                           <template scope="scope">
                             <el-input v-show="scope.row.signal=='高级查询'" size="small" v-model="scope.row[data.prop]" :placeholder="data.label"></el-input>
-                            <span v-show="scope.row.signal!=='高级查询'">{{scope.row[data.prop]}}</span>
+                            <span @click="browseInfo(scope.$index)" v-show="scope.row.signal!=='高级查询'">{{scope.row[data.prop]}}</span>
                           </template>
                         </el-table-column>
                       <el-table-column fixed="right" label="操作" width="100">
@@ -204,7 +204,7 @@
             <!-- 查看详细信息 -->
             <div class="detailedInfo" style="display:none">
                 <el-breadcrumb separator="/" style="margin-bottom: 20px">
-                  <el-breadcrumb-item ><a @click="backToTable">学生信息</a></el-breadcrumb-item>
+                  <el-breadcrumb-item >您的位置：<a @click="backToTable">学生信息</a></el-breadcrumb-item>
                   <el-breadcrumb-item>{{choosedStudent}}</el-breadcrumb-item>
                 </el-breadcrumb>
                 <el-tabs v-model="activeInfoName" type="border-card">
@@ -338,7 +338,7 @@ export default {
         {label:'家乡所在火车站',code:'hometownRailwayStation'},{label:'省份',code:'province'},{label:'所在城市',code:'city'},{label:'家庭详细地址',code:'familyAddress'},
         {label:'家庭电话',code:'familyTelNumber'},{label:'邮政编码',code:'postcode'},{label:'特长',code:'specialty'},{label:'高中曾任职务',code:'dutyInHighSchool'},
         {label:'高中曾获奖励',code:'awardInHighSchool'},{label:'科技竞赛获奖',code:'isHadTechnologyCompetitionAward'},{label:'父亲姓名',code:'fatherName'},{label:'父亲工作单位',code:'fatherWorkUnit'},
-        {label:'父亲工作单位地址',code:'fatherWorkUnitAddress'},{label:'父亲职务',ccode:'fatherDuty'},{label:'父亲邮编',code:'fatherPostcode'},{label:'父亲电话',code:'fatherTelNumber'},
+        {label:'父亲工作单位地址',code:'fatherWorkUnitAddress'},{label:'父亲职务',code:'fatherDuty'},{label:'父亲邮编',code:'fatherPostcode'},{label:'父亲电话',code:'fatherTelNumber'},
         {label:'母亲姓名',code:'motherName'},{label:'母亲工作单位',code:'motherWorkUnit'},{label:'母亲工作单位地址',code:'motherWorkUnitAddress'},{label:'母亲职务',code:'motherDuty'},
         {label:'母亲邮编',code:'motherPostcode'},{label:'母亲电话',code:'motherTelNumber'},
         {label:'学业状态',code:'studyCondition'}
@@ -362,7 +362,7 @@ export default {
         {label:'家庭详细地址',code:'familyAddress'},
         {label:'家庭电话',code:'familyTelNumber'},{label:'父亲姓名',code:'fatherName'},
         {label:'父亲工作单位',code:'fatherWorkUnit'},
-        {label:'父亲工作单位地址',code:'fatherWorkUnitAddress'},{label:'父亲职务',ccode:'fatherDuty'},
+        {label:'父亲工作单位地址',code:'fatherWorkUnitAddress'},{label:'父亲职务',code:'fatherDuty'},
         {label:'父亲邮编',code:'fatherPostcode'},{label:'父亲电话',code:'fatherTelNumber'},{label:'母亲姓名',code:'motherName'},
         {label:'母亲工作单位',code:'motherWorkUnit'},{label:'母亲工作单位地址',code:'motherWorkUnitAddress'},
         {label:'母亲职务',code:'motherDuty'},
@@ -562,6 +562,7 @@ export default {
             success:function(data){
                 alert(data.message);
                 self.password=''
+                $("#fileExcel").val("")
             },
             error:function(XMLHttpRequest,textStatus,errorThrown,data){
                 alert("上传失败"+XMLHttpRequest.status);
@@ -894,7 +895,7 @@ export default {
       $('.detailedInfo').show();
       $('.defaultInfoTable').hide();
       this.editStuInfo=false
-      this.choosedStudent = this.testData[index].Name
+      this.choosedStudent = this.testData[index].name
       this.allInfoSet = this.testData[index]
       var token = sessionStorage.getItem('token')
       var self=this
@@ -947,6 +948,12 @@ export default {
       }
     },
     uploadExcel(){
+      if(this.chooseStuInfoToImExport.length==0)
+      {
+        this.ifChecked=new Array(43);
+        this.ifChecked.fill(1)
+        this.setSettings()
+      }
       $("#fileExcel").click();
     },
     downloadTemplate(){
@@ -1062,6 +1069,23 @@ export default {
                 alert("请选择5～12项");
             }
         },
+    changeImExportSettings(){
+      var allOptions = this.chooseStuInfoToImExport
+      var count=allOptions.length
+            for(var j=0;j<this.setting_stu_table.length;j++){
+              this.ifChecked = new Array(43);
+              this.ifChecked.fill(0)
+            }
+              this.hideSettings();
+              for(var i=0;i<count;i++){
+                for(var j=0;j<this.setting_stu_table.length;j++){
+                  if(allOptions[i]==this.setting_stu_table[j].label){
+                    this.ifChecked[j]=1
+                  }
+                }
+              }
+              this.setSettings();
+    },
     hideSettings(){
       $('#cover').css('display','none');
     },
@@ -1302,7 +1326,7 @@ export default {
     font-size: 15px;
     display: none;
 }
-    .search-btn{
+    .search-button{
       float:right;
       margin: 4px;
     }
