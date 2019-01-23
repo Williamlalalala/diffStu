@@ -2,7 +2,7 @@
      <div>
        <div v-if="sign === 1 ">
         <!--建档历史列表-->
-        <el-table :data="history_records">
+        <el-table :data="history_records" height="600">
           <el-table-column v-for="(record,index) in history_table_attitude" :key="index" :prop="record.prop" :label="record.label">
           </el-table-column>
           <el-table-column fixed="right" label="操作" width="190">
@@ -235,7 +235,7 @@ export default {
         { prop: "studentClass", label: "studentClass" },
         { prop: "ethnicGroup", label: "ethnicGroup" },
         { prop: "contactWay", label: "contactWay" },
-        { prop: "familyTelNumber", label: "familyTelNumber" },
+        //{ prop: "familyTelNumber", label: "familyTelNumber" },
         { prop: "bulidingTime", label: "bulidingTime" },
         { prop: "helpType", label: "helpType" },
         { prop: "attentionType", label: "attentionType" },
