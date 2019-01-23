@@ -9,6 +9,7 @@ import ArchivedStudent from '../components/ArchivedStudent'
 import NewRecord from '../components/NewRecord'
 import ArchiveRecord from '../components/ArchiveRecord'
 import HelpType from '../components/HelpType'
+import ChangePwd from '../components/ChangePwd'
 
 Vue.use(Router)
 
@@ -23,7 +24,8 @@ let router = new Router({
       {path:'/archivedStudent',name:'archivedStudent',component:ArchivedStudent},
       {path:'/basicStudent',name:'basicStudent',component:BasicStudent},
       {path:'/historicStudents',name:'historicStudents',component:HistoricStudents},
-      {path:'/statisticalNumber',name:'statisticalNumber',component:StatisticalNumber}
+      {path:'/statisticalNumber',name:'statisticalNumber',component:StatisticalNumber},
+      {path:'/changePwd',name:'changePwd',component:ChangePwd}
     ]}
   ]
 })

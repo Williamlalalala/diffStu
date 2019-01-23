@@ -15,7 +15,7 @@
                 <i class="iconfont icon-down"></i></span>
                 <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item>
-                    <div><span style="color:#555;font-size: 14px;">修改密码</span></div>
+                        <router-link :to="{name:'changePwd'}"><span style="color:#555;font-size: 14px;">修改密码</span></router-link>
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="logout" style="color: #555;font-size: 14px;">退出登录</el-dropdown-item>
                 </el-dropdown-menu>
@@ -30,7 +30,7 @@
                     background-color="#333744"
                     text-color="#fff"
                     active-text-color="#409eff"
-                    default-openeds="[1-1,2-1]">
+                    :default-openeds="openends">
                     <el-submenu index="1">
                         <template slot="title">
                             <i class="el-icon-menu"></i>困难学生管理系统
@@ -62,7 +62,8 @@
 export default {
     data(){
         return {
-            userName:''
+            userName:'',
+            openends:['1','2']
         }
     },
     beforeRouteEnter:(to,from,next)=>{
@@ -87,6 +88,9 @@ export default {
 
 
 <style scoped>
+a {
+    text-decoration:none;
+}
 .el-main{
     position:absolute;
     right: 0px;
