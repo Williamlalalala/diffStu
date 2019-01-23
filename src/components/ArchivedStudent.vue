@@ -661,9 +661,11 @@ export default {
           data: JSON.stringify(this.stuDetailInf),
           success: function (res) {
             if (res.success) {
-              console.log('成功');
+              that.$notify({
+                title: '保存成功',
+                message: h('i', { style: 'color: green'}, res.message)
+              });
             } else {
-              console.log(res);
               that.$notify({
                 title: '发送命令成功',
                 message: h('i', { style: 'color: teal'}, '变更失败')
