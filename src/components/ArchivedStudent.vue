@@ -2,7 +2,7 @@
   <div>
       <div v-if="sign === 1 ">
         <!--查看总体的记录-->
-        <el-table :data="beforStuInfTable">
+        <el-table :data="beforStuInfTable"  height="600">
           <el-table-column v-for="data in archivedStudentTable" :prop="data.prop" :label="data.label">
           </el-table-column>
           <el-table-column fixed="right" label="操作" width="160">
@@ -254,8 +254,7 @@ export default {
             { label: '创建时间', prop: "bulidingTime", show: true },
             { label: '帮扶方式', prop: "helpType", show: true },
             { label: '关注类型', prop: "attentionType", show: true },
-            { label: '上次记录时间', prop: "lastRecordTime", show: true },
-            { label: '高亮', prop: "highlight", show: true },
+            { label: '上次记录时间', prop: "lastRecordTime", show: true }
       ],
 
       //建档学生详细信息

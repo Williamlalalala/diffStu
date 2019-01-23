@@ -1,60 +1,82 @@
 <template>
 <div>
-  <el-autocomplete
-      popper-class="my-autocomplete"
-      v-model="state"
-      :fetch-suggestions="querySearch"
-      placeholder="请输入内容"
-      @select="handleSelect">
-      <i
-        class="el-icon-edit el-input__icon"
-        slot="suffix"
-        @click="handleIconClick">
-      </i>
-      <template  slot-scope="{ item }">
-        <div class="name">{{ item.name }}</div>
-        <span class="stu">{{ item.studentId }}</span>
-      </template>
-        
-    </el-autocomplete>
+  <el-form>
+      <el-form-item label="学号">
+        <el-autocomplete
+          popper-class="my-autocomplete"
+          v-model="autocompleteId"
+          :fetch-suggestions="querySearchId"
+          placeholder="请输入要检索的学号"
+          @select="handleSelect">
+          <i
+            class="el-icon-edit el-input__icon"
+            slot="suffix"
+            @click="handleIconClick">
+          </i>
+          <template  slot-scope="{ item }">
+            <div class="name">{{ item.name }}</div>
+            <span class="stu">{{ item.studentId }}</span>
+          </template>
+        </el-autocomplete>
+      </el-form-item>
+      <el-form-item label="姓名">
+        <el-autocomplete
+          popper-class="my-autocomplete"
+          v-model="autocompleteName"
+          :fetch-suggestions="querySearchName"
+          placeholder="请输入要检索的学号"
+          @select="handleSelect">
+          <i
+            class="el-icon-edit el-input__icon"
+            slot="suffix"
+            @click="handleIconClick">
+          </i>
+          <template  slot-scope="{ item }">
+            <div class="name">{{ item.name }}</div>
+            <span class="stu">{{ item.studentId }}</span>
+          </template>
+        </el-autocomplete>
+      </el-form-item>
+  </el-form>
+  
 
-    <div class="dynamicClass" :model="dynamic_data">
-          <!--新建建档-->
-         <div><p>学号:</p><el-input  placeholder="studentId" v-model="dynamic_data.studentId"/></div>
-         <div><p>教师号:</p><el-input  placeholder="teacherId" v-model="dynamic_data.teacherId"/></div>
-         <div><p>性别:</p><el-input  placeholder="sex" v-model="dynamic_data.sex"/></div>
-         <div><p>姓名:</p><el-input  placeholder="name" v-model="dynamic_data.name"/></div>
-         <div><p>专业:</p><el-input  placeholder="major" v-model="dynamic_data.major"/></div>
-         <div><p>年级:</p><el-input  placeholder="grade" v-model="dynamic_data.grade"/></div>
-         <div><p>班级:</p><el-input  placeholder="studentClass" v-model="dynamic_data.studentClass"/></div>
-         <div><p>政治面貌:</p><el-input  placeholder="politicalStatus" v-model="dynamic_data.politicalStatus"/></div>
-         <div><p>民族:</p><el-input  placeholder="ethnicGroup" v-model="dynamic_data.ethnicGroup"/></div>
-         <div><p>职责:</p><el-input  placeholder="duty" v-model="dynamic_data.duty"/></div>
-         <div><p>寝室:</p><el-input  placeholder="dormitory" v-model="dynamic_data.dormitory"/></div>
-         <div><p>出生日期:</p><el-input  placeholder="birthOrigin" v-model="dynamic_data.birthOrigin"/></div>
-         <div><p>家庭地址:</p><el-input  placeholder="familyAddress" v-model="dynamic_data.familyAddress"/></div>
-         <div><p>联系方式:</p><el-input  placeholder="contactWay" v-model="dynamic_data.contactWay"/></div>
-         <div><p>家庭电话:</p><el-input  placeholder="familyTelNumber" v-model="dynamic_data.familyTelNumber"/></div>
-         <div><p>父亲电话:</p><el-input  placeholder="fatherTelNumber" v-model="dynamic_data.fatherTelNumber"/></div>
-         <div><p>母亲电话:</p><el-input  placeholder="motherTelNumber" v-model="dynamic_data.motherTelNumber"/></div>
-         <div><p>家庭状况:</p><el-input  placeholder="familyCondition" v-model="dynamic_data.familyCondition"/></div>
-         <div><p>学习情况:</p><el-input  placeholder="studyCondition" v-model="dynamic_data.studyCondition"/></div>
-         <div><p>健康情况:</p><el-input  placeholder="healthCondition" v-model="dynamic_data.healthCondition"/></div>
-         <div><p>生活情况:</p><el-input  placeholder="lifeCondition" v-model="dynamic_data.lifeCondition"/></div>
-         <div><p>其他情况:</p><el-input  placeholder="otherCondition" v-model="dynamic_data.otherCondition"/></div>
-         <div><p>创建基本情况:</p><el-input  placeholder="bulidingBasis" v-model="dynamic_data.bulidingBasis"/></div>
-         <div><p>创建记录人:</p><el-input  placeholder="bulidingRecorder" v-model="dynamic_data.bulidingRecorder"/></div>
-         <div><p>创建时间:</p><el-input  placeholder="bulidingTime" v-model="dynamic_data.bulidingTime"/></div>
-         <div><p>创建人:</p><el-input  placeholder="bulidingPerson" v-model="dynamic_data.bulidingPerson"/></div>
-         <div><p>创建人职责:</p><el-input  placeholder="bulidingPersonDuty" v-model="dynamic_data.bulidingPersonDuty"/></div>
-         <el-select v-model="dynamic_data.helpType" placeholder="帮扶类型" style="margin-top:50px;margin-bottom:200px;">
-           <el-option v-for="data in holeHelpType" :label="data.helpTypeName" :value="data.helpTypeName"></el-option>
-         </el-select>
-         <el-select v-model="dynamic_data.attentionType"  placeholder="关注类型" style="margin-top:50px;margin-bottom:200px;">
-           <el-option v-for="data in holeAttentionType" :label="data.attentionTypeName" :value="data.attentionTypeName"></el-option>
-         </el-select>
-    </div>
-    <el-button class="submitButton" type="success" @click="submit()" icon="el-icon-check" ></el-button>
+  <div class="dynamicClass" :model="dynamic_data">
+        <!--新建建档-->
+        <div><p>学号:</p><el-input  placeholder="studentId" v-model="dynamic_data.studentId"/></div>
+        <div><p>教师号:</p><el-input  placeholder="teacherId" v-model="dynamic_data.teacherId"/></div>
+        <div><p>性别:</p><el-input  placeholder="sex" v-model="dynamic_data.sex"/></div>
+        <div><p>姓名:</p><el-input  placeholder="name" v-model="dynamic_data.name"/></div>
+        <div><p>专业:</p><el-input  placeholder="major" v-model="dynamic_data.major"/></div>
+        <div><p>年级:</p><el-input  placeholder="grade" v-model="dynamic_data.grade"/></div>
+        <div><p>班级:</p><el-input  placeholder="studentClass" v-model="dynamic_data.studentClass"/></div>
+        <div><p>政治面貌:</p><el-input  placeholder="politicalStatus" v-model="dynamic_data.politicalStatus"/></div>
+        <div><p>民族:</p><el-input  placeholder="ethnicGroup" v-model="dynamic_data.ethnicGroup"/></div>
+        <div><p>职责:</p><el-input  placeholder="duty" v-model="dynamic_data.duty"/></div>
+        <div><p>寝室:</p><el-input  placeholder="dormitory" v-model="dynamic_data.dormitory"/></div>
+        <div><p>出生日期:</p><el-input  placeholder="birthOrigin" v-model="dynamic_data.birthOrigin"/></div>
+        <div><p>家庭地址:</p><el-input  placeholder="familyAddress" v-model="dynamic_data.familyAddress"/></div>
+        <div><p>联系方式:</p><el-input  placeholder="contactWay" v-model="dynamic_data.contactWay"/></div>
+        <div><p>家庭电话:</p><el-input  placeholder="familyTelNumber" v-model="dynamic_data.familyTelNumber"/></div>
+        <div><p>父亲电话:</p><el-input  placeholder="fatherTelNumber" v-model="dynamic_data.fatherTelNumber"/></div>
+        <div><p>母亲电话:</p><el-input  placeholder="motherTelNumber" v-model="dynamic_data.motherTelNumber"/></div>
+        <div><p>家庭状况:</p><el-input  placeholder="familyCondition" v-model="dynamic_data.familyCondition"/></div>
+        <div><p>学习情况:</p><el-input  placeholder="studyCondition" v-model="dynamic_data.studyCondition"/></div>
+        <div><p>健康情况:</p><el-input  placeholder="healthCondition" v-model="dynamic_data.healthCondition"/></div>
+        <div><p>生活情况:</p><el-input  placeholder="lifeCondition" v-model="dynamic_data.lifeCondition"/></div>
+        <div><p>其他情况:</p><el-input  placeholder="otherCondition" v-model="dynamic_data.otherCondition"/></div>
+        <div><p>创建基本情况:</p><el-input  placeholder="bulidingBasis" v-model="dynamic_data.bulidingBasis"/></div>
+        <div><p>创建记录人:</p><el-input  placeholder="bulidingRecorder" v-model="dynamic_data.bulidingRecorder"/></div>
+        <div><p>创建时间:</p><el-input  placeholder="bulidingTime" v-model="dynamic_data.bulidingTime"/></div>
+        <div><p>创建人:</p><el-input  placeholder="bulidingPerson" v-model="dynamic_data.bulidingPerson"/></div>
+        <div><p>创建人职责:</p><el-input  placeholder="bulidingPersonDuty" v-model="dynamic_data.bulidingPersonDuty"/></div>
+        <el-select v-model="dynamic_data.helpType" placeholder="帮扶类型" style="margin-top:50px;margin-bottom:200px;">
+          <el-option v-for="data in holeHelpType" :label="data.helpTypeName" :value="data.helpTypeName"></el-option>
+        </el-select>
+        <el-select v-model="dynamic_data.attentionType"  placeholder="关注类型" style="margin-top:50px;margin-bottom:200px;">
+          <el-option v-for="data in holeAttentionType" :label="data.attentionTypeName" :value="data.attentionTypeName"></el-option>
+        </el-select>
+  </div>
+  <el-button class="submitButton" type="success" @click="submit()" icon="el-icon-check" ></el-button>
 </div>
     
 </template>
@@ -134,7 +156,8 @@ export default {
             attentionType:""
       },
       students:[],
-      state:"",
+      autocompleteId:"",
+      autocompleteName:"",
       new_dynamic_data:{},
       //暂时存放查询学生条件
       temp_querystr:{
@@ -184,16 +207,17 @@ export default {
     }
   },
   methods:{
-          querySearch(queryString, cb) {
+          querySearchId(queryString, cb) {
             var that = this;
             var token = sessionStorage.getItem("token");
             const h = this.$createElement; 
-            if (queryString.length>=10) {
-              that.temp_querystr.grade = queryString.substring(0, 4);
-              that.temp_querystr.studentClass = queryString.substring(6, 10);
-              console.log(that.temp_querystr);
+            if (queryString.length>0) {
+              // that.temp_querystr.grade = queryString.substring(0, 4);
+              // that.temp_querystr.studentClass = queryString.substring(6, 10);
+              // console.log(that.temp_querystr);
+              that.temp_querystr.studentId = queryString;
               $.ajax({
-                url: this.ip+"/newhelp/api/baseStudents/"+sessionStorage.getItem('userName')+"/30/1/0",
+                url: this.ip+"/newhelp/api/baseStudents/byIdName",
                 type: "POST",
                 beforeSend: function (request) {
                     request.setRequestHeader("Authorization", token);
@@ -204,17 +228,11 @@ export default {
                 success: function (res) {
                   if (res.success) {
                     console.log(res.data);
-                    that.students = res.data.baseStudents;
+                    that.students = res.data;
                     console.log(that.students);
                     var results = that.students;//queryString ? this.students.filter(this.createFilter(queryString)) : this.students;
                     // 调用 callback 返回建议列表的数据
                     cb(results);
-
-                  } else {
-                    that.$notify({
-                      title: '标题名称',
-                      message: h('i', { style: 'color: teal'}, '数据获取错误')
-                    });
                   }
                 },
                 error: function (el) {
@@ -222,9 +240,42 @@ export default {
                   console.log('数据获取错误');
                 },
               })
-              
             }
-            
+          },
+          querySearchName(queryString, cb) {
+            var that = this;
+            var token = sessionStorage.getItem("token");
+            const h = this.$createElement; 
+            if (queryString.length>0) {
+              // that.temp_querystr.grade = queryString.substring(0, 4);
+              // that.temp_querystr.studentClass = queryString.substring(6, 10);
+              // console.log(that.temp_querystr);
+              that.temp_querystr.name = queryString;
+              $.ajax({
+                url: this.ip+"/newhelp/api/baseStudents/byIdName",
+                type: "POST",
+                beforeSend: function (request) {
+                    request.setRequestHeader("Authorization", token);
+                },
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(that.temp_querystr),
+                success: function (res) {
+                  if (res.success) {
+                    console.log(res.data);
+                    that.students = res.data;
+                    console.log(that.students);
+                    var results = that.students;//queryString ? this.students.filter(this.createFilter(queryString)) : this.students;
+                    // 调用 callback 返回建议列表的数据
+                    cb(results);
+                  }
+                },
+                error: function (el) {
+                  console.log(el);
+                  console.log('数据获取错误');
+                },
+              })
+            }
           },
           createFilter(queryString) {
 
