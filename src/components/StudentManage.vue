@@ -30,7 +30,8 @@
                     background-color="#333744"
                     text-color="#fff"
                     active-text-color="#409eff"
-                    :default-openeds="openends">
+                    :default-openeds="openeds"
+                    >
                     <el-submenu index="1">
                         <template slot="title">
                             <i class="el-icon-menu"></i>困难学生管理系统
@@ -63,7 +64,7 @@ export default {
     data(){
         return {
             userName:'',
-            openends:['1','2']
+            openeds:['1','2']
         }
     },
     beforeRouteEnter:(to,from,next)=>{

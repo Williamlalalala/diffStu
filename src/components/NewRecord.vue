@@ -24,7 +24,7 @@
           popper-class="my-autocomplete"
           v-model="autocompleteName"
           :fetch-suggestions="querySearchName"
-          placeholder="请输入要检索的学号"
+          placeholder="请输入要检索的姓名"
           @select="handleSelect">
           <i
             class="el-icon-edit el-input__icon"
@@ -40,9 +40,9 @@
   </el-form>
   
 
-  <div class="dynamicClass" :model="dynamic_data">
+  <!-- <div class="dynamicClass" :model="dynamic_data"> -->
         <!--新建建档-->
-        <div><p>学号:</p><el-input  placeholder="studentId" v-model="dynamic_data.studentId"/></div>
+        <!-- <div><p>学号:</p><el-input  placeholder="studentId" v-model="dynamic_data.studentId"/></div>
         <div><p>教师号:</p><el-input  placeholder="teacherId" v-model="dynamic_data.teacherId"/></div>
         <div><p>性别:</p><el-input  placeholder="sex" v-model="dynamic_data.sex"/></div>
         <div><p>姓名:</p><el-input  placeholder="name" v-model="dynamic_data.name"/></div>
@@ -76,9 +76,26 @@
           <el-option v-for="data in holeAttentionType" :label="data.attentionTypeName" :value="data.attentionTypeName"></el-option>
         </el-select>
   </div>
-  <el-button class="submitButton" type="success" @click="submit()" icon="el-icon-check" ></el-button>
+  <el-button class="submitButton" type="success" @click="submit()" icon="el-icon-check" ></el-button>-->
+<el-form :inline="true" :model="dynamic_data" class="demo-form-inline" label-width="135px">
+  <el-form-item v-for="(item,index) in input_data" :key="index" :label="item.label">
+    <el-input v-model="dynamic_data[item.code]" :placeholder="item.label"></el-input>
+  </el-form-item>
+  <el-form-item label="帮扶类型">
+    <el-select v-model="dynamic_data.helpType" placeholder="帮扶类型">
+      <el-option v-for="data in holeHelpType" :label="data.helpTypeName" :value="data.helpTypeName"></el-option>
+    </el-select>
+  </el-form-item>
+  <el-form-item label="关注类型">
+    <el-select v-model="dynamic_data.attentionType" placeholder="关注类型">
+      <el-option v-for="data in holeAttentionType" :label="data.attentionTypeName" :value="data.attentionTypeName"></el-option>
+    </el-select>
+  </el-form-item>
+  <el-form-item>
+    <el-button class="submitButton" type="success" @click="submit()">创建</el-button>
+  </el-form-item>
+</el-form>
 </div>
-    
 </template>
 
 <script>
@@ -87,35 +104,15 @@ export default {
     return{
       ip:'http://211.83.111.247:8082',
       input_data:[
-        {placeholder:"studentId",model:"dynamic_data.studentId"},
-        {placeholder:"teacherId",model:"dynamic_data.teacherId"},
-        {placeholder:"sex",model:"dynamic_data.sex"},
-        {placeholder:"name",model:"dynamic_data.name"},
-        {placeholder:"major",model:"dynamic_data.major"},
-        {placeholder:"grade",model:"dynamic_data.grade"},
-        {placeholder:"studentClass",model:"dynamic_data.studentClass"},
-        {placeholder:"politicalStatus",model:"dynamic_data.politicalStatus"},
-        {placeholder:"ethnicGroup",model:"dynamic_data.ethnicGroup"},
-        {placeholder:"duty",model:"dynamic_data.duty"},
-        {placeholder:"dormitory",model:"dynamic_data.dormitory"},
-        {placeholder:"birthOrigin",model:"dynamic_data.birthOrigin"},
-        {placeholder:"familyAddress",model:"dynamic_data.familyAddress"},
-        {placeholder:"contactWay",model:"dynamic_data.contactWay"},
-        {placeholder:"familyTelNumber",model:"dynamic_data.familyTelNumber"},
-        {placeholder:"fatherTelNumber",model:"dynamic_data.fatherTelNumber"},
-        {placeholder:"motherTelNumber",model:"dynamic_data.motherTelNumber"},
-        {placeholder:"familyCondition",model:"dynamic_data.familyCondition"},
-        {placeholder:"studyCondition",model:"dynamic_data.studyCondition"},
-        {placeholder:"healthCondition",model:"dynamic_data.healthCondition"},
-        {placeholder:"lifeCondition",model:"dynamic_data.lifeCondition"},
-        {placeholder:"otherCondition",model:"dynamic_data.otherCondition"},
-        {placeholder:"bulidingBasis",model:"dynamic_data.bulidingBasis"},
-        {placeholder:"bulidingRecorder",model:"dynamic_data.bulidingRecorder"},
-        {placeholder:"bulidingTime",model:"dynamic_data.bulidingTime"},
-        {placeholder:"bulidingPerson",model:"dynamic_data.bulidingPerson"},
-        {placeholder:"bulidingPersonDuty",model:"dynamic_data.bulidingPersonDuty"},
-        {placeholder:"helpType",model:"dynamic_data.helpType"},
-        {placeholder:"attentionType",model:"dynamic_data.attentionType"},
+        {label:'学号',code:"studentId"},{label:'教师帐号',code:"teacherId"},{label:'性别',code:'sex'},
+        {label:'姓名',code:'name'},{label:'专业',code:'major'},{label:'年级',code:'grade'},
+        {label:'班级',code:'studentClass'},{label:'政治面貌',code:'politicalStatus'},{label:'民族',code:'ethnicGroup'},
+        {label:'职务',code:'duty'},{label:'宿舍',code:'dormitory'},{label:'籍贯',code:'birthOrigin'},
+        {label:'家庭详细地址',code:'familyAddress'},{label:'联系方式',code:'contactWay'},{label:'家庭电话',code:'familyTelNumber'},
+        {label:'父亲电话',code:'fatherTelNumber'},{label:'母亲电话',code:'motherTelNumber'},{label:'家庭状况',code:'familyCondition'},
+        {label:'学习状况',code:'studyCondition'},{label:'健康状况',code:'healthCondition'},{label:'生活状况',code:'lifeCondition'},
+        {label:'其他情况',code:'otherCondition'},{label:'创建基本情况',code:'bulidingBasis'},{label:'创建记录人',code:'bulidingRecorder'},
+        {label:'创建时间',code:'bulidingTime'},{label:'创建人',code:'bulidingPerson'},{label:'创建人职责',code:'bulidingPersonDuty'}
       ],
       textarea_data:[
         {placeholder:"",row:""}
@@ -227,9 +224,7 @@ export default {
                 data: JSON.stringify(that.temp_querystr),
                 success: function (res) {
                   if (res.success) {
-                    console.log(res.data);
                     that.students = res.data;
-                    console.log(that.students);
                     var results = that.students;//queryString ? this.students.filter(this.createFilter(queryString)) : this.students;
                     // 调用 callback 返回建议列表的数据
                     cb(results);
@@ -262,9 +257,7 @@ export default {
                 data: JSON.stringify(that.temp_querystr),
                 success: function (res) {
                   if (res.success) {
-                    console.log(res.data);
                     that.students = res.data;
-                    console.log(that.students);
                     var results = that.students;//queryString ? this.students.filter(this.createFilter(queryString)) : this.students;
                     // 调用 callback 返回建议列表的数据
                     cb(results);
@@ -292,10 +285,8 @@ export default {
                 i,
                 j;
             const h = this.$createElement; 
-            console.log(item);
             that.dynamic_data = item;
             that.dynamic_data.teacherId = sessionStorage.getItem('userName');
-            console.log(this.dynamic_data.studentId);
             $.ajax({
                 url: this.ip+"/newhelp/api/baseStudent/archive/"+item.studentId,
                 type: "GET",
@@ -307,7 +298,6 @@ export default {
                 data: {},
                 success: function (res) {
                   if (res.success) {
-                    console.log(res.data);
                     that.new_dynamic_data = res.data;
                   } else {
                     that.$notify({
@@ -318,14 +308,12 @@ export default {
                 },
                 error: function (el) {
                   console.log(el);
-                  console.log(item);
                   console.log('数据获取错误');
                 },
               })
 
               for (i in that.dynamic_data) {
                 if (that.dynamic_data[i]==="") {
-                  console.log(i);
                   for(j in that.new_dynamic_data){
                     if(i == j){
                       that.dynamic_data[i] = that.new_dynamic_data[j];
@@ -337,19 +325,16 @@ export default {
                   }
                 }
                 else {
-                  console.log("lalallala"+i);
                 }
                 
               }
           },
           handleIconClick(ev) {
-            console.log(ev);
           },
           submit(){
             var that = this;
             var token = sessionStorage.getItem("token");
             const h = this.$createElement; 
-            console.log(this.dynamic_data);
             $.ajax({
                   //{recordName}/{studentId}
                   url: this.ip+"/newhelp/api/archiveStudent",
@@ -364,7 +349,7 @@ export default {
                     if (res.success) {
                       that.$notify({
                         title: '新增成功',
-                        message: h('i', { style: 'color: green'}, '数据获取成功')
+                        message: h('i', { style: 'color: green'}, res.message)
                       });
                     } else {
                       that.$notify({
@@ -430,7 +415,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 .my-autocomplete {
   
 }

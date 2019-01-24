@@ -52,37 +52,20 @@
         </el-table>
 
         <!--此处新增-->
-        <el-col :span="18" v-if="table_sign === 2">
+        <el-col v-if="table_sign === 2">
 
-          <div class="sub-title" >
-            <div><p>学号:</p><el-input  v-model="stuDetailInf.studentId"/></div>
-            <div><p>性别:</p><el-input  v-model="stuDetailInf.sex"/></div>
-            <div><p>姓名:</p><el-input  v-model="stuDetailInf.name"/></div>
-            <div><p>专业:</p><el-input  v-model="stuDetailInf.major"/></div>
-            <div><p>年级:</p><el-input  v-model="stuDetailInf.grade"/></div>
-            <div><p>班级:</p><el-input  v-model="stuDetailInf.studentClass"/></div>
-            <div><p>政治面貌:</p><el-input  v-model="stuDetailInf.politicalStatus"/></div>
-            <div><p>民族:</p><el-input  v-model="stuDetailInf.ethnicGroup"/></div>
-            <div><p>职责:</p><el-input  v-model="stuDetailInf.duty"/></div>
-            <div><p>寝室:</p><el-input  v-model="stuDetailInf.dormitory"/></div>
-            <div><p>出生日期:</p><el-input  v-model="stuDetailInf.birthOrigin"/></div>
-            <div><p>家庭地址:</p><el-input  v-model="stuDetailInf.familyAddress"/></div>
-            <div><p>联系方式:</p><el-input  v-model="stuDetailInf.contactWay"/></div>
-            <div><p>家庭电话:</p><el-input  v-model="stuDetailInf.familyTelNumber"/></div>
-            <div><p>父亲电话:</p><el-input  v-model="stuDetailInf.fatherTelNumber"/></div>
-            <div><p>母亲电话:</p><el-input  v-model="stuDetailInf.motherTelNumber"/></div>
-            <div><p>家庭状况:</p><el-input  v-model="stuDetailInf.familyCondition"/></div>
-            <div><p>学习情况:</p><el-input  v-model="stuDetailInf.studyCondition"/></div>
-            <div><p>健康情况:</p><el-input  v-model="stuDetailInf.healthCondition"/></div>
-            <div><p>生活情况:</p><el-input  v-model="stuDetailInf.lifeCondition"/></div>
-            <div><p>其他情况:</p><el-input  v-model="stuDetailInf.otherCondition"/></div>
-            <div><p>创建基本情况:</p><el-input  v-model="stuDetailInf.bulidingBasis"/></div>
-            <div><p>创建记录人:</p><el-input  v-model="stuDetailInf.bulidingRecorder"/></div>
-            <div><p>创建时间:</p><el-input  v-model="stuDetailInf.bulidingTime"/></div>
-            <div><p>创建人:</p><el-input  v-model="stuDetailInf.bulidingPerson"/></div>
-            <div><p>创建人职责:</p><el-input  v-model="stuDetailInf.bulidingPersonDuty"/></div>
-            <div><p>帮扶类型:</p><el-input  v-model="stuDetailInf.helpType"/></div>
-            <div><p>关注类型:</p><el-input  v-model="stuDetailInf.attentionType"/></div>
+          <div>
+             <el-form :inline="true" :model="stuDetailInf" class="demo-form-inline" label-width="100px">
+                <el-form-item v-for="(item,index) in input_data" :key="index" :label="item.label">
+                  <el-input v-model="stuDetailInf[item.code]" :placeholder="item.label"></el-input>
+                </el-form-item>
+                <el-form-item label="帮扶类型">
+                  <el-input v-model="stuDetailInf.helpType" placeholder="帮扶类型"></el-input>
+                </el-form-item>
+                <el-form-item label="关注类型">
+                  <el-input v-model="stuDetailInf.attentionType" placeholder="关注类型"></el-input>
+                </el-form-item>
+              </el-form>
           </div>
           <div style="position:reletive;left:10%;">
             <el-input
@@ -171,6 +154,17 @@ export default {
       sign:1,
       //进入之后的列表显示问题
       table_sign:2,
+      input_data:[
+        {label:'学号',code:"studentId"},{label:'性别',code:'sex'},
+        {label:'姓名',code:'name'},{label:'专业',code:'major'},{label:'年级',code:'grade'},
+        {label:'班级',code:'studentClass'},{label:'政治面貌',code:'politicalStatus'},{label:'民族',code:'ethnicGroup'},
+        {label:'职务',code:'duty'},{label:'宿舍',code:'dormitory'},{label:'籍贯',code:'birthOrigin'},
+        {label:'家庭详细地址',code:'familyAddress'},{label:'联系方式',code:'contactWay'},{label:'家庭电话',code:'familyTelNumber'},
+        {label:'父亲电话',code:'fatherTelNumber'},{label:'母亲电话',code:'motherTelNumber'},{label:'家庭状况',code:'familyCondition'},
+        {label:'学习状况',code:'studyCondition'},{label:'健康状况',code:'healthCondition'},{label:'生活状况',code:'lifeCondition'},
+        {label:'其他情况',code:'otherCondition'},{label:'创建基本情况',code:'bulidingBasis'},{label:'创建记录人',code:'bulidingRecorder'},
+        {label:'创建时间',code:'bulidingTime'},{label:'创建人',code:'bulidingPerson'},{label:'创建人职责',code:'bulidingPersonDuty'}
+      ],
       activeName: 'fifth',
       mockStuName:"",
       mockStuId:"",
@@ -766,7 +760,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 .search-btn {
   background-color: white;
   font-size: 20px;
@@ -775,44 +769,11 @@ export default {
   line-height: 50px;
   margin-bottom: 10px;
 }
-.el-form-item {
-  width: 50%;
-  position: relative;
-  left: 25%;
-  display: flex;
-  justify-content: flex-start;
-}
 .innerOp{
   margin: 20px;
 }
 .el-icon-back{
   width: 30px;
   height: 30px;;
-}
-.sub-title{
-  width: 100%;
-  position: relative;
-}
-.sub-title div{
-  position:relative;
-  width:30%;
-  float:left;
-  left: 10%;
-}
-.sub-title label{
-  position: relative;
-  font-size: 12px;
-  float: left;
-  margin:15px;
-  height: 50px;
-  width:200px
-}
-.sub-title input{
-  float: right;
-  background: transparent;
-  border: 1px solid #dcdfe6;;
-  padding-left: 5px;
-  position: relative;
-  width: 135%;
 }
 </style>
