@@ -134,6 +134,9 @@
                           <el-button @click.native="showSearchBox" slot="reference" class="search-button" type="primary">查询</el-button>
                       </el-popover>
                       <el-button @click="toggleAdvancedSearch" class="search-button">高级查询</el-button>
+                      <el-tooltip v-if="isSearching" content="清空查询">
+                        <el-button @click="removeSearch" class="search-button" plain type="primary" icon="el-icon-close" circle></el-button>
+              </el-tooltip>
                     </el-row>
                     <input  type ="file" id="fileExcel" @change="uploadVerify" style="opacity:1;display:none;float:right;font-size:12px;margin-top:8px" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
                     <form class="" action="http://211.83.111.247:8082/newhelp/api/download/baseStudentTemplate" method="get" style="display:none">
@@ -155,25 +158,16 @@
                 </div>
               </el-dialog>
               <div class="info-table">
-                  <el-table :data="testData" max-height="500" @selection-change="handleSelectionChange">
-                      <!-- <el-table-column type="expand">
-                          <template slot-scope="props">
-                            <el-form v-show="props.row.signal!=='高级查询'" label-position="left" inline class="demo-table-expand">
-                              <el-form-item v-for="data in basic_stu_table" :label="data.label">
-                                <span>{{ props.row[data.prop] }}</span>
-                              </el-form-item>
-                            </el-form>
-                          </template>
-                        </el-table-column> -->
+                  <el-table :data="testData" max-height="500" @row-click="handleRowClick" @selection-change="handleSelectionChange">
                         <el-table-column v-for="data in setting_stu_table" :label="data.label" :key="data.prop" v-if="data.show" :prop="data.prop">
                           <template scope="scope">
                             <el-input v-show="scope.row.signal=='高级查询'" size="small" v-model="scope.row[data.prop]" :placeholder="data.label"></el-input>
-                            <span @click="browseInfo(scope.$index)" v-show="scope.row.signal!=='高级查询'">{{scope.row[data.prop]}}</span>
+                            <span v-show="scope.row.signal!=='高级查询'">{{scope.row[data.prop]}}</span>
                           </template>
                         </el-table-column>
                       <el-table-column fixed="right" label="操作" width="100">
                         <div slot-scope="scope">
-                          <el-button v-show="scope.row.signal=='高级查询'" @click="doAdvancedSearch()" type="text" size="small">查询</el-button>
+                          <el-button v-show="scope.row.signal=='高级查询'" @click.stop="doAdvancedSearch()" type="text" size="small">查询</el-button>
                           <el-button v-show="scope.row.signal!=='高级查询'" @click="browseInfo(scope.$index)" type="text" size="small">查看</el-button>
                         </div>
                       </el-table-column>
@@ -203,10 +197,8 @@
             </div>
             <!-- 查看详细信息 -->
             <div class="detailedInfo" style="display:none">
-                <el-breadcrumb separator="/" style="margin-bottom: 20px">
-                  <el-breadcrumb-item >您的位置：<a @click="backToTable">学生信息</a></el-breadcrumb-item>
-                  <el-breadcrumb-item>{{choosedStudent}}</el-breadcrumb-item>
-                </el-breadcrumb>
+              <i class="el-icon-back" @click="backToTable"></i>
+                姓名：{{choosedStudent}}
                 <el-tabs v-model="activeInfoName" type="border-card">
                   <el-tab-pane label="所有信息" name="allInfo">
                     <el-row :gutter="20">
@@ -226,7 +218,7 @@
                       </el-col>
                       <el-col :span="5" style="text-align:center">
                         <img class="studentPhoto" :src="allInfoSet.photoUrl" alt="照片">
-                        <input type="file" accept="image/jpeg,image/png,image/jpg" id="uploadPhoto" style="display: none">
+                        <input type="file" accept="image/jpeg,image/png,image/jpg" id="uploadPhoto" @change="saveStuInfo" style="display: none">
                         <el-button style="margin-top: 20px;" @click="uploadPhoto" size="mini" plain>上传照片</el-button>
                         <el-row style="margin-top: 20px;">
                           <el-button v-if="editStuInfo==true" type="primary" plain @click="saveStuInfo" size="mini">保存</el-button>
@@ -295,13 +287,6 @@ export default {
       choosedStudents:[],
       toBeSentKeywords:JSON.stringify({}),
       choosedStudent:'',
-      // basic_stu_table: [
-      //   { prop: "studentId", label: "学号" },{ prop: "name", label: "姓名" },
-      //   { prop: "sex", label: "年级" }, { prop: "studentClass", label: "班级" },
-      //   { prop: "gender", label: "性别" }, { prop: "post", label: "职务" }, 
-      //   {prop:"dormitory",label:"宿舍"},{ prop: "contact_way", label: "联系方式" },
-      //   {prop:"idCardNumber",label:"身份证号"},{prop:"qqNumber",label:"QQ"}
-      // ],
       setting_stu_table:[
         {label:'学号',prop:"studentId",show:true},{label:'姓名',prop:'name',show:true},
         {label:'年级',prop:'grade',show:true},{label:'班级',prop:'studentClass',show:true},
@@ -452,6 +437,7 @@ export default {
         StudyCondition:''
       },
       titleOfSettings:'显示设置',
+      isSearching:false
     }
   },
   created(){
@@ -484,7 +470,6 @@ export default {
           success:function(data){
             if(data.success){
               alert('上传成功！');
-              window.location.reload()
             }else{
               alert(data.message);
             }
@@ -605,15 +590,25 @@ export default {
           processData: false,
           dataType:'json',
           success:function(data){
-             alert(data.message);
+            const loading = self.$loading({
+          lock: true,
+          text: '保存中',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+        setTimeout(() => {
+          loading.close();
+           alert(data.message);
             if(data.success){
-              window.location.reload()
+              self.browseInfo(self.index)
             }
+        }, 3000);
           },
           error:function(XMLHttpRequest, textStatus, errorThrown, data){
            alert("发生错误" + XMLHttpRequest.status);
          }
         });
+        $("#uploadPhoto").val("")
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -629,6 +624,7 @@ export default {
       delete searchOptions.signal
       this.toBeSentKeywords = JSON.stringify(searchOptions);
       this.jumpToPage();
+      this.isSearching=true
     },
     toggleAdvancedSearch(){
       if(this.testData[0].signal!='高级查询'){
@@ -889,6 +885,13 @@ export default {
               "motherTelNumber":"",
          });
          this.jumpToPage();
+         this.isSearching=true
+    },
+    handleRowClick(row){
+      if(row.signal!=='高级查询'){
+        var index=this.testData.indexOf(row)
+        this.browseInfo(index)
+      }
     },
     browseInfo(index){
       this.index = index
@@ -1090,22 +1093,51 @@ export default {
       $('#cover').css('display','none');
     },
     changeSelection(){
-            if(this.titleOfSettings=="显示设置"){
-                this.titleOfSettings="导入/更新设置"
-                this.longTitleOfSettings="导入/更新选项设置"
-                $(".chooseStuToImExport").css("display","block");
-                $(".chooseStu").css("display","none");
-                $("#confirm").css("display","none");
-                $("#confirmImExport").css("display","block");
-              }else{
-                this.longTitleOfSettings="请选择您想显示的学生信息(5～12项)"
-                this.titleOfSettings="显示设置"
-                $(".chooseStuToImExport").css("display","none");
-                $(".chooseStu").css("display","block");
-                $("#confirmImExport").css("display","none");
-                $("#confirm").css("display","block");
-              }
+      if(this.titleOfSettings=="显示设置"){
+          this.titleOfSettings="导入/更新设置"
+          this.longTitleOfSettings="导入/更新选项设置"
+          $(".chooseStuToImExport").css("display","block");
+          $(".chooseStu").css("display","none");
+          $("#confirm").css("display","none");
+          $("#confirmImExport").css("display","block");
+        }else{
+          this.longTitleOfSettings="请选择您想显示的学生信息(5～12项)"
+          this.titleOfSettings="显示设置"
+          $(".chooseStuToImExport").css("display","none");
+          $(".chooseStu").css("display","block");
+          $("#confirmImExport").css("display","none");
+          $("#confirm").css("display","block");
         }
+  },
+  checkDetail(row,event,column){
+    $('.detailedInfo').show();
+$('.defaultInfoTable').hide();
+    this.choosedStudent=row.name
+    var token=sessionStorage.getItem('token')
+    $.ajax({
+  url:'http://211.83.111.247:8082/newhelp/api/baseStudent/all/'+row.studentId,
+  beforeSend:function(request){
+    request.setRequestHeader('Authorization',token)
+  },
+  type:'GET',
+  dataType:'json',
+  success:function(res){
+    if(res.success){
+      self.allInfoSet=res.data
+    }else{
+      alert(res.message)
+    }
+  },
+  error:function(jqXHR){
+    alert("发生错误："+jqXHR.status)
+  }
+})
+  },
+  removeSearch(){
+      this.toBeSentKeywords = JSON.stringify({})
+         this.jumpToPage();
+         this.isSearching=false
+  }
   }
 }
 </script>
@@ -1394,4 +1426,8 @@ export default {
       width: 150px;
       height: 200px;
     }
+    .el-icon-back{
+    width: 30px;
+    height: 30px;
+}
   </style>

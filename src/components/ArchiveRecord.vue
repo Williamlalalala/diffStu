@@ -2,7 +2,7 @@
      <div>
        <div v-if="sign === 1 ">
         <!--建档历史列表-->
-        <el-table :data="history_records" height="600">
+        <el-table :data="history_records" height="580">
           <el-table-column v-for="(record,index) in history_table_attitude" :key="index" :prop="record.prop" :label="record.label">
           </el-table-column>
           <el-table-column fixed="right" label="操作" width="190">

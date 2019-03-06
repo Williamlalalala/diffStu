@@ -2,7 +2,7 @@
   <div>
       <div v-if="sign === 1 ">
         <!--查看总体的记录-->
-        <el-table :data="beforStuInfTable"  height="600">
+        <el-table :data="beforStuInfTable"  height="580">
           <el-table-column v-for="data in archivedStudentTable" :prop="data.prop" :label="data.label">
           </el-table-column>
           <el-table-column fixed="right" label="操作" width="160">
